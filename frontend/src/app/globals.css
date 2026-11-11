@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #16334c;
+  --color-accent: #ad9057;
+  --color-surface: #f6f7f9;
+  --color-muted: #5f6c79;
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-brand);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer components {
+  .card { background: white; border: 1px solid #e2e6eb; border-radius: 1rem; padding: 1.5rem; }
+  .field { width: 100%; border: 1px solid #acb7c2; border-radius: .5rem; padding: .65rem .8rem; background: white; color: var(--color-brand); }
+  .button, .button-secondary { border-radius: .5rem; padding: .65rem 1rem; font-size: .875rem; font-weight: 600; cursor: pointer; }
+  .button { background: var(--color-brand); color: white; }
+  .button-secondary { border: 1px solid #acb7c2; background: white; color: var(--color-brand); }
+  button:disabled, input:disabled, select:disabled { opacity: .6; cursor: not-allowed; }
+  :is(button, input, select, a):focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+}

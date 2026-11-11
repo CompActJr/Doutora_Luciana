@@ -1,0 +1,11 @@
+# Aplicar depois de compose.validation.yaml com -p dra-restore e .env.restore.
+services:
+  backend:
+    environment:
+      APP_ORIGIN: https://localhost:20443
+  n8n:
+    environment:
+      N8N_EDITOR_BASE_URL: https://localhost:20567/
+      WEBHOOK_URL: https://localhost:20567/
+  caddy:
+    ports: !override ["127.0.0.1:20443:443", "127.0.0.1:20567:5678"]

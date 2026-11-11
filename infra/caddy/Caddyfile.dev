@@ -1,0 +1,20 @@
+{
+	admin off
+	auto_https off
+}
+
+:80 {
+	@api path /api /api/*
+	handle @api {
+		reverse_proxy backend:3001 {
+			header_up X-Dra-Proxy-Client-IP {remote_host}
+		}
+	}
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
+
+:5678 {
+	reverse_proxy n8n:5678
+}

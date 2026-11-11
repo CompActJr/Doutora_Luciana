@@ -1,0 +1,29 @@
+{
+	email {$ACME_EMAIL}
+	admin off
+}
+
+{$PANEL_DOMAIN} {
+	encode zstd gzip
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+		X-Frame-Options DENY
+	}
+	@api path /api /api/*
+	handle @api {
+		reverse_proxy backend:3001 {
+			header_up X-Dra-Proxy-Client-IP {remote_host}
+		}
+	}
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
+
+{$N8N_DOMAIN} {
+	encode zstd gzip
+	header -Server
+	reverse_proxy n8n:5678
+}

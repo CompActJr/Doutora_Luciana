@@ -1,0 +1,20 @@
+{
+  "name": "dra-luciana",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@12.18.0",
+  "engines": { "node": ">=24.18.0 <25", "pnpm": "12.18.0" },
+  "scripts": {
+    "dev:frontend": "pnpm --filter @dra/frontend run dev",
+    "dev:backend": "pnpm --filter @dra/backend run dev",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "node --test scripts/tests/setup-env.test.mjs && pnpm --filter @dra/backend run test",
+    "test:infra": "node --test scripts/tests/compose.test.mjs",
+    "test:integration": "node scripts/test-auth-integration.mjs",
+    "test:smtp": "node scripts/test-auth-integration.mjs --smtp",
+    "admin:create": "pnpm --filter @dra/backend run admin:create",
+    "db:generate": "pnpm --filter @dra/backend run db:generate",
+    "db:validate": "pnpm --filter @dra/backend run db:validate",
+    "db:migrate": "pnpm --filter @dra/backend run db:migrate"
+  }
+}

@@ -1,0 +1,59 @@
+name: dra-dev
+services:
+  postgres:
+    ports: ["127.0.0.1:5432:5432"]
+  migrate:
+    image: dra-backend-migrate:dev
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: migrate
+    command: [pnpm, run, db:migrate]
+  backend:
+    image: dra-backend:dev
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: development
+    environment:
+      NODE_ENV: development
+      APP_ORIGIN: http://localhost:8080
+    command: [sh, -c, "pnpm run db:generate && pnpm run dev:backend"]
+    volumes:
+      - .:/app
+      - backend_pnpm_root:/app/node_modules
+      - backend_pnpm_app:/app/backend/node_modules
+      - backend_pnpm_contracts:/app/packages/contracts/node_modules
+  frontend:
+    image: dra-frontend:dev
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      target: development
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - .:/app
+      - frontend_pnpm_root:/app/node_modules
+      - frontend_pnpm_app:/app/frontend/node_modules
+      - frontend_pnpm_contracts:/app/packages/contracts/node_modules
+      - frontend_next:/app/frontend/.next
+  caddy:
+    ports: ["127.0.0.1:8080:80", "127.0.0.1:5678:5678"]
+    volumes:
+      - ./infra/caddy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
+
+volumes:
+  backend_pnpm_root:
+  backend_pnpm_app:
+  backend_pnpm_contracts:
+  frontend_pnpm_root:
+  frontend_pnpm_app:
+  frontend_pnpm_contracts:
+  frontend_next:
+
+networks:
+  database:
+    # Permite ferramentas locais no host; a porta continua restrita a 127.0.0.1.
+    internal: false

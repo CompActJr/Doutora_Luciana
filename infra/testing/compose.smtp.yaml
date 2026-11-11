@@ -1,0 +1,21 @@
+name: dra-smtp-test
+services:
+  mailpit:
+    image: axllent/mailpit:v1.31.3
+    environment:
+      MP_SMTP_TLS_CERT: /certs/cert.pem
+      MP_SMTP_TLS_KEY: /certs/key.pem
+      MP_SMTP_REQUIRE_STARTTLS: "true"
+      MP_DISABLE_VERSION_CHECK: "true"
+      MP_QUIET: "true"
+    ports:
+      - "127.0.0.1:11025:1025"
+      - "127.0.0.1:18025:8025"
+    volumes:
+      - ../../backups/validation/smtp-certs:/certs:ro
+    healthcheck:
+      test: [CMD, /mailpit, readyz]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+    security_opt: [no-new-privileges:true]

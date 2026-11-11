@@ -1,0 +1,19 @@
+# Ensaio local dos artefatos de produção. Usar -p dra-validation e .env.validation.
+services:
+  backend:
+    environment:
+      APP_ORIGIN: https://localhost:18443
+  n8n:
+    environment:
+      N8N_HOST: localhost
+      N8N_EDITOR_BASE_URL: https://localhost:18567/
+      WEBHOOK_URL: https://localhost:18567/
+    networks: !override [database, automation]
+  caddy:
+    ports: !override ["127.0.0.1:18443:443", "127.0.0.1:18567:5678"]
+    volumes:
+      - ./infra/testing/Caddyfile.validation:/etc/caddy/Caddyfile:ro
+    networks: [application, automation]
+networks:
+  automation:
+    internal: true

@@ -1,0 +1,13 @@
+[Unit]
+Description=Backup criptografado do painel Dra. Luciana
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/bin/bash /opt/dra-luciana/infra/backup/backup.sh /etc/dra/backup.env
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
