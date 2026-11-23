@@ -16,6 +16,11 @@ const environmentSchema = z.object({
   SMTP_USER: optionalText,
   SMTP_PASSWORD: optionalText,
   SMTP_FROM: optionalText,
+  OPENAI_API_KEY: optionalText,
+  OPENAI_MODEL: optionalText,
+  GOOGLE_CALENDAR_CLIENT_ID: optionalText,
+  GOOGLE_CALENDAR_CLIENT_SECRET: optionalText,
+  GOOGLE_CALENDAR_TOKEN_KEY: z.preprocess((value) => value === "" ? undefined : value, z.string().regex(/^[a-fA-F0-9]{64}$/).optional()),
 }).superRefine((env, context) => {
   if (env.NODE_ENV === "production" && !env.APP_ORIGIN.startsWith("https://")) {
     context.addIssue({ code: "custom", path: ["APP_ORIGIN"], message: "HTTPS obrigatório." });

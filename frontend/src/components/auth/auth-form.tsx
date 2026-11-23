@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { apiRequest } from "@/lib/api";
+import { PasswordField } from "@/components/ui/password-field";
 
 type Mode = "login" | "recover" | "reset";
 
@@ -39,29 +40,29 @@ export function AuthForm({ mode, token }: { mode: Mode; token?: string }) {
     } finally { setPending(false); }
   }
 
-  return <main className="flex min-h-screen items-center justify-center px-5 py-12">
-    <section className="card w-full max-w-md" aria-labelledby="auth-title">
-      <p className="mb-2 text-sm font-medium text-muted">Dra. Luciana · Painel da clínica</p>
-      <h1 id="auth-title" className="mb-5 text-2xl font-semibold">{title}</h1>
-      {mode === "login" && <p className="mb-5 text-sm text-muted">Acesso exclusivo para pessoas autorizadas pela clínica.</p>}
-      {mode === "reset" && !token ? <p role="alert">Link inválido ou expirado. Solicite uma nova recuperação de senha.</p> : !done &&
-        <form onSubmit={submit} className="grid gap-4">
-          {mode !== "reset" && <label className="grid gap-1 text-sm">E-mail
+  return <main className="auth-shell">
+    <section className="auth-card" aria-labelledby="auth-title">
+      <img className="auth-logo" src="/images/logos/dra_luciana_logo_vt_cl.png" width="172" height="80" alt="Dra. Luciana Conceição — Odontologia" />
+      <h1 id="auth-title">{title}</h1>
+      {mode === "login" && <p className="auth-intro">Acesso restrito à equipe da clínica.</p>}
+      {mode === "reset" && !token ? <p role="alert" className="auth-message">Link inválido ou expirado. Solicite uma nova recuperação de senha.</p> : !done &&
+        <form onSubmit={submit}>
+          {mode !== "reset" && <label>E-mail
             <input className="field" name="email" type="email" autoComplete="username" required maxLength={254} disabled={pending} />
           </label>}
-          {mode !== "recover" && <label className="grid gap-1 text-sm">{mode === "reset" ? "Nova senha" : "Senha"}
-            <input className="field" name="password" type="password" autoComplete={mode === "reset" ? "new-password" : "current-password"}
+          {mode !== "recover" && <label>{mode === "reset" ? "Nova senha" : "Senha"}
+            <PasswordField className="field" name="password" autoComplete={mode === "reset" ? "new-password" : "current-password"}
               required minLength={mode === "reset" ? 12 : 1} maxLength={128} disabled={pending} />
           </label>}
-          {mode === "reset" && <label className="grid gap-1 text-sm">Confirme a nova senha
-            <input className="field" name="confirmation" type="password" autoComplete="new-password" required minLength={12} maxLength={128} disabled={pending} />
-            <span className="text-muted">Use de 12 a 128 caracteres.</span>
+          {mode === "reset" && <label>Confirme a nova senha
+            <PasswordField className="field" name="confirmation" autoComplete="new-password" required minLength={12} maxLength={128} disabled={pending} />
+            <span className="field-help">Use de 12 a 128 caracteres.</span>
           </label>}
           <button className="button" disabled={pending}>{pending ? "Aguarde…" : mode === "login" ? "Entrar" : mode === "recover" ? "Enviar instruções" : "Salvar nova senha"}</button>
         </form>}
-      {message && <p className="mt-4 text-sm" role={done ? "status" : "alert"}>{message}</p>}
-      <div className="mt-5 text-sm underline underline-offset-4">
-        <Link href={mode === "login" ? "/recuperar-senha" : done && mode === "reset" ? "/login" : mode === "reset" ? "/recuperar-senha" : "/login"}>
+      {message && <p className="auth-message" role={done ? "status" : "alert"}>{message}</p>}
+      <div className="auth-link">
+        <Link className="text-action" href={mode === "login" ? "/recuperar-senha" : done && mode === "reset" ? "/login" : mode === "reset" ? "/recuperar-senha" : "/login"}>
           {mode === "login" ? "Esqueci minha senha" : mode === "reset" && !done ? "Solicitar outro link" : "Voltar para o login"}
         </Link>
       </div>

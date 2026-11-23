@@ -1,0 +1,1864 @@
+{
+  "id": "51fe545a04d940cd",
+  "name": "[BASE BLOQUEADA] Protótipo - ChatBot WhatsApp 4 copy",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://example.invalid/RECONFIGURAR",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"message\": {\n    \"key\": {\n      \"id\": \"{{ $('Edit Fields').item.json.id }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "2a1f235fecb803a2",
+      "name": "Baixar audio1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        6000,
+        0
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64",
+        "options": {
+          "fileName": "audio.ogg",
+          "mimeType": "audio/ogg"
+        }
+      },
+      "id": "6a27274f53b8244d",
+      "name": "Convert to File1",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        6224,
+        0
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $('Edit Fields').first().json;\nconst texto = ($json.text || '').trim();\n\nreturn [{ json: { ...base, mensagem: texto } }];"
+      },
+      "id": "b219b3c8c390ca45",
+      "name": "Code in JavaScript1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6672,
+        0
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://example.invalid/RECONFIGURAR",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3-turbo"
+            },
+            {
+              "name": "language",
+              "value": "pt"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "75424002febe6277",
+      "name": "Transcrever audio1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        6448,
+        0
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9299142-c6c4-4bc1-aeae-21beb7aae214",
+              "name": "telefone",
+              "value": "={{ $json.body.data.key.remoteJidAlt || $json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "10b1799d-76d3-4dd8-8a92-a68255e13cfd",
+              "name": "nome",
+              "value": "={{ $json.body.data.pushName }}",
+              "type": "string"
+            },
+            {
+              "id": "32851a5d-7523-4246-b25b-23ae8db6155f",
+              "name": "mensagem",
+              "value": "=  {{ ($json.body.data.message?.conversation || $json.body.data.message?.extendedTextMessage?.text || '').trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "808aaa92-7f2e-4622-b384-f8c0f905c8c2",
+              "name": "fromMe",
+              "value": "={{ $json.body.data.key.fromMe }}",
+              "type": "boolean"
+            },
+            {
+              "id": "436b8c3e-cf73-4d1b-9ab2-22157ea42f37",
+              "name": "dataHora",
+              "value": "={{ $json.body.date_time }}",
+              "type": "string"
+            },
+            {
+              "id": "8335669d-2e0b-4f7b-81a2-96d88096423e",
+              "name": "telefoneNumero",
+              "value": "={{ ($json.body.data.key.remoteJidAlt || $json.body.data.key.remoteJid).split('@')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "5e449be4-9e4e-49a6-810a-b04f7f5d892c",
+              "name": "remoteJid",
+              "value": "={{$json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "6f8fcd1a-806c-4b8a-ab55-65836a7b69b3",
+              "name": "tipo",
+              "value": "=  {{ ($json.body.data.messageType) }}",
+              "type": "string"
+            },
+            {
+              "id": "bb320ff0-5438-4f1b-8530-ef24aa453042",
+              "name": "id",
+              "value": "={{ $json.body.data.key.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dffaa6a59b195ee7",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        1648
+      ],
+      "disabled": false,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {},
+      "id": "14442ea0292f81f8",
+      "name": "No Operation, do nothing2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        896,
+        1840
+      ],
+      "disabled": false,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensagem }}",
+        "options": {
+          "systemMessage": "BASE DE REFERÊNCIA BLOQUEADA. Substituir o prompt original pela configuração revisada e versionada do painel. Não executar atendimento, agenda ou envios externos nesta cópia.",
+          "maxIterations": 20
+        }
+      },
+      "id": "796190442c2f9f4a",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2976,
+        1488
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "id": "94bd1039e9604d5d",
+      "name": "Google Gemini Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        2128
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "id": "a2ed1b86f1261cff",
+      "name": "Groq Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        16,
+        2336
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {},
+      "id": "51be2d91e1bfd08e",
+      "name": "No Operation, do nothing3",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        672,
+        1552
+      ],
+      "disabled": false,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {},
+      "id": "38ec4857f9d486dd",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        1936
+      ],
+      "disabled": false,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "95c0f89b-37b1-4587-932b-c374de16b359",
+                    "leftValue": "={{ ($json.tipo || '').trim() === 'audioMessage' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "83d18390-88e7-45d9-9dcc-b1b1dca15f2b",
+                    "leftValue": "={{ ['imageMessage','videoMessage','documentMessage','locationMessage','contactMessage','stickerMessage'].includes(($json.tipo || '').trim()) }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "midia"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "9d55a797-aa47-4af8-8de1-6a4929b1d78a",
+                    "leftValue": "={{ ($json.mensagem || '').trim() !== '' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "texto"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "813ad21161141e9f",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        2192,
+        1600
+      ],
+      "disabled": false,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Planilha com as respostas oficiais aprovadas pela Dra. Luciana (valores, primeira consulta, DTM, bruxismo, ortopedia, ronco, estética, cuidados). Devolve todas as linhas. Deve ser chamada em TODA mensagem do paciente, antes de responder.",
+        "documentId": {
+          "__rl": true,
+          "value": "RECONFIGURAR_DOCUMENTID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "RECONFIGURAR_SHEETNAME",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "46e15c7cbe1c8509",
+      "name": "Modelos_de_mensagem",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        2736,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://example.invalid/RECONFIGURAR",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').first().json.telefone }}"
+            },
+            {
+              "name": "=text",
+              "value": "=   Ocorreu um erro no bot. Número do paciente: {{ $('Edit Fields1').first().json.telefone }}\n   Nome do paciente: {{ $('Edit Fields1').first().json.nome }}\n   Detalhe: {{ String($json.error).toLowerCase().includes('429') || String($json.error).toLowerCase().includes('too many requests') ? 'Limite de uso da IA excedido (429)' : String($json.error).toLowerCase().includes('404') || String($json.error).toLowerCase().includes('not found') ? 'Modelo de IA não encontrado (404)' : 'Erro: ' + String($json.error) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b5a85a9b0b560b9e",
+      "name": "Mensagem_doutora",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3824,
+        1664
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3e0f3fd7-71c5-439d-8aae-307f846bbc1f",
+              "name": "output",
+              "value": "Desculpe, tive um probleminha para te responder agora 😕 Pode tentar enviar sua mensagem de novo em alguns minutos?",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5ce3903b2faff14d",
+      "name": "Mensagem de erro",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        4048,
+        1664
+      ],
+      "disabled": false,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://example.invalid/RECONFIGURAR",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').first().json.telefone }}"
+            },
+            {
+              "name": "text",
+              "value": "=Oi! 😊 Por aqui eu consigo ler apenas mensagens de texto, então não consegui abrir o que você enviou. Pode me escrever o que você precisa? Assim eu consigo te ajudar rapidinho."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bc178cf65c7d974b",
+      "name": "Mensagem padrão para midia",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3040,
+        1296
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ false }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "6b0ce3af54adb323",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        672,
+        1744
+      ],
+      "disabled": false,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "dcc44030-f8e3-4c90-bd26-d5514461eec6",
+              "leftValue": "={{ $json.remoteJid.endsWith('@g.us') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3ce99316e8e426a7",
+      "name": "É grupo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        448,
+        1648
+      ],
+      "disabled": false,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dra-base-bloqueada-chatbot-whatsapp",
+        "options": {}
+      },
+      "id": "4b1ea5d74f2d23d0",
+      "name": "Recebe mensagem",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        1648
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://example.invalid/RECONFIGURAR",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields1').first().json.telefone }}"
+            },
+            {
+              "name": "text",
+              "value": "=   {{ $json.output || 'Desculpe, tive um probleminha para te responder agora 😕 Pode tentar enviar sua mensagem de novo em alguns minutos?' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5f946aca69389133",
+      "name": "mensagem_paciente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        4272,
+        1600
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://example.invalid/RECONFIGURAR",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"message\": {\n    \"key\": {\n      \"id\": \"{{ $('Edit Fields1').item.json.id }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "b91bd3ee5451bbf3",
+      "name": "Baixar audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        624
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base64",
+        "options": {
+          "fileName": "audio.ogg",
+          "mimeType": "audio/ogg"
+        }
+      },
+      "id": "091ee12170ac9395",
+      "name": "Convert to File",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        624
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $('Edit Fields1').first().json;\nconst texto = ($json.text || '').trim();\n\nreturn [{ json: { ...base, mensagem: texto } }];"
+      },
+      "id": "ac913331a23c25fc",
+      "name": "Code in JavaScript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        624
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://example.invalid/RECONFIGURAR",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3-turbo"
+            },
+            {
+              "name": "language",
+              "value": "pt"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1c9507895cfd01cf",
+      "name": "Transcrever audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        624
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "c01395d543a2c9fb",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        3296,
+        1936
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "080afc7d-362e-4c77-a3d3-c1fa44ae0314",
+              "leftValue": "={{ $json.fromMe === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9a4c18883a3611d2",
+      "name": "é a dra?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        976,
+        1440
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "RECONFIGURAR_DATATABLEID",
+          "mode": "id"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "telefone",
+              "keyValue": "={{ $json.telefoneNumero }}"
+            }
+          ]
+        }
+      },
+      "id": "bd9bc83e771bd9ba",
+      "name": "buscar pausa",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        1792
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "adc321c8-f287-46b9-9749-c031f815e560",
+              "leftValue": "={{ Number($json.pausadoAte || 0) > Date.now() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d4e4e08979440565",
+      "name": "ta pausado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1552,
+        1776
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: $('Edit Fields1').first().json }];"
+      },
+      "id": "9d31b026103442bf",
+      "name": "restaurar dados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        1840
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "4206cab0-565d-411e-a191-0e05a6e8ea8b",
+              "leftValue": "=   {{ ['/assumir','/liberar'].includes(($json.mensagem || '').trim().toLowerCase()) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "2a5f7be22ec6aa6c",
+      "name": "é comando?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1248,
+        1360
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "RECONFIGURAR_DATATABLEID",
+          "mode": "id"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "telefone",
+              "keyValue": "={{ $json.telefoneNumero }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $json.telefoneNumero }}",
+            "pausadoAte": "=   {{ String(($json.mensagem || '').trim().toLowerCase() === '/liberar' ? 0 : Date.now() + 1 * 60 * 60 * 1000) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "pausadoAte",
+              "displayName": "pausadoAte",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "043bde0bf9f74f02",
+      "name": "Registrar pausa",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1456,
+        1344
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "description": "Registra que o paciente confirmou que vai comparecer à consulta. Use quando ele disser que confirma.",
+        "workflowId": {
+          "__rl": true,
+          "value": "1340d5eb8ce19cdd",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $json.telefoneNumero }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "f6893363d3611941",
+      "name": "Confirmar_presenca",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2992,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "description": "Marca uma consulta nova. Use SOMENTE depois que o paciente escolher um dos horários oferecidos pela ferramenta de horários livres e confirmar. Informe o nome completo do paciente e o início no formato AAAA-MM-DDTHH:MM:00-03:00 (exemplo: 2026-11-09T09:00:00-03:00). O nome deve ser o que o paciente informou na conversa.\n\n   Antes de chamar, você já deve ter perguntado o motivo da consulta ao paciente nesta conversa.",
+        "workflowId": {
+          "__rl": true,
+          "value": "baa51f70bba8c1ae",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "=   {{ $fromAI('nome', 'Nome completo do paciente, exatamente como ele escreveu na conversa. Nunca use o nome do perfil do WhatsApp.', 'string') }}",
+            "inicio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('inicio', ``, 'string') }}",
+            "telefone": "={{ $json.telefoneNumero }}",
+            "resumo": "=  {{ $fromAI('resumo', 'Resumo de 1 a 2 frases para a Dra.: se o paciente é novo ou já é paciente, o motivo da consulta que ele respondeu (com as palavras dele, sem diagnóstico e sem inventar) e as preferências de dia e turno. Só escreva \"motivo não informado\" se você JÁ perguntou e ele não quis ou não soube dizer.', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "inicio",
+              "displayName": "inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "resumo",
+              "displayName": "resumo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "91f691c4c19dc79f",
+      "name": "Agendar_consulta",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3120,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "description": "Cancela a consulta do paciente. Use SOMENTE depois de o paciente confirmar que quer cancelar.",
+        "workflowId": {
+          "__rl": true,
+          "value": "1f4534f88f4e3cc2",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $json.telefoneNumero }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "a4f727c71d78a24b",
+      "name": "Cancelar_consulta",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3248,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "description": "Muda a consulta do paciente para outro horário. Use SOMENTE depois de oferecer horários livres, o paciente escolher um e confirmar. Informe o novo início no formato AAAA-MM-DDTHH:MM:00-03:00.",
+        "workflowId": {
+          "__rl": true,
+          "value": "0bb12717a5476eb8",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $json.telefoneNumero }}",
+            "novo_inicio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('novo_inicio', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "novo_inicio",
+              "displayName": "novo_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "f8bcfc6ebc396208",
+      "name": "Remarcar_consulta",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3376,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "description": "Mostra a consulta futura mais próxima do paciente, com data, hora e situação. Use antes de confirmar, remarcar ou cancelar, para conferir com o paciente qual consulta é.",
+        "workflowId": {
+          "__rl": true,
+          "value": "1f69cc6cfeca30b5",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $json.telefoneNumero }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "2191330d307f6a5f",
+      "name": "Consultar_consulta",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3504,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "description": "Encaminha à Dra. Luciana, por WhatsApp, uma dúvida que o bot não consegue responder, com o resumo da conversa e o telefone do paciente. Use quando não houver resposta aprovada, quando a dúvida for clínica ou quando for urgência. Só diga ao paciente que foi encaminhado depois que esta ferramenta retornar sucesso.",
+        "workflowId": {
+          "__rl": true,
+          "value": "c8212afd973a018b",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $json.telefoneNumero }}",
+            "resumo": "={{ $fromAI('resumo', 'Resumo da conversa em 2 a 4 frases: o que o paciente perguntou, o que já foi respondido e o que ficou sem resposta.', 'string') }}",
+            "nome": "=   {{ $fromAI('nome', 'Nome que o paciente digitou na conversa. Se ele não informou, escreva \"não informado\".', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "resumo",
+              "displayName": "resumo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "b5fef6e54e9dd4d6",
+      "name": "Encaminhar_duvida",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        3632,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "RECONFIGURAR_DOCUMENTID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "RECONFIGURAR_SHEETNAME",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "7d13c4a897ab0c1e",
+      "name": "ler planilha1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        1072
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const linhas = $input.all()\n  .map(i => `Pergunta: ${i.json.mensagem}\\nResposta aprovada: ${i.json.resposta}`)\n  .join('\\n\\n');\n\nreturn [{ json: { ...$('Edit Fields1').first().json, planilha: linhas } }];"
+      },
+      "id": "3df9ccd0b85af6cb",
+      "name": "juntar planilha1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        848
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "pausa_humana",
+        "columns": {
+          "column": [
+            {
+              "name": "telefone"
+            },
+            {
+              "name": "pausadoAte"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "018b99922b0d4c0b",
+      "name": "Create a data table",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1376,
+        1888
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.telefone }}-teste25",
+        "contextWindowLength": 30
+      },
+      "id": "6b614e6b0fcf0c22",
+      "name": "Postgres Chat Memory1",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        2608,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.telefone }}"
+      },
+      "id": "3f89fa77f6c6397d",
+      "name": "Postgres Chat Memory2",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        4464,
+        1328
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "2b292620-b5df-48a9-9025-4145ee6a908e",
+              "leftValue": "={{ $json.telefoneNumero }}",
+              "rightValue": "={{ $json.telefoneNumero }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "d2c4dad2d2bc8efd",
+      "name": "If2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        656,
+        1984
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "description": "Use esta ferramenta quando o cliente perguntar sobre horários disponíveis para consulta em um dia específico. A entrada é a data no formato AAAA-MM-DD (exemplo: 2026-10-27). Retorna a lista de horários livres desse dia.",
+        "workflowId": {
+          "__rl": true,
+          "value": "487d5c5d50e1d5de",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "data": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('data', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "data"
+          ],
+          "schema": [
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "07278dfe9943ff39",
+      "name": "Horarios_livres",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2864,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "id": "04622b5ef23383d7",
+      "name": "Google Gemini Chat Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        2480,
+        1728
+      ],
+      "disabled": true,
+      "notes": "Base da equipe, revisada para estudo. Ações externas bloqueadas e credenciais removidas.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "errorMessage": "BASE DE REFERÊNCIA BLOQUEADA. Substituir o prompt original pela configuração revisada e versionada do painel. Não executar atendimento, agenda ou envios externos nesta cópia."
+      },
+      "id": "356f23601aeba89e",
+      "name": "BLOQUEIO - base para integração",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        260,
+        1468
+      ],
+      "disabled": false
+    }
+  ],
+  "connections": {
+    "Baixar audio1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Transcrever audio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcrever audio1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "É grupo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "mensagem_paciente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensagem_doutora",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Mensagem padrão para midia",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modelos_de_mensagem": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem_doutora": {
+      "main": [
+        [
+          {
+            "node": "Mensagem de erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem de erro": {
+      "main": [
+        [
+          {
+            "node": "mensagem_paciente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É grupo?": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recebe mensagem": {
+      "main": [
+        [
+          {
+            "node": "BLOQUEIO - base para integração",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar audio": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Transcrever audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcrever audio": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "é a dra?": {
+      "main": [
+        []
+      ]
+    },
+    "buscar pausa": {
+      "main": [
+        [
+          {
+            "node": "ta pausado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ta pausado?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "restaurar dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "é comando?": {
+      "main": [
+        [
+          {
+            "node": "Registrar pausa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirmar_presenca": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agendar_consulta": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancelar_consulta": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remarcar_consulta": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar_consulta": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encaminhar_duvida": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing3": {
+      "main": [
+        []
+      ]
+    },
+    "Horarios_livres": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "tags": []
+}

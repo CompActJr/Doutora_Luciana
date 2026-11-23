@@ -1,5 +1,41 @@
 # Infraestrutura e operação
 
+## Verificação das portas locais — 13/11/2026
+
+Conferidos a configuração efetiva e os serviços em execução do projeto `dra-dev`, sem build, reinício ou alteração de dados/volumes:
+
+| Serviço | Endereço no host | Evidência |
+|---|---|---|
+| Painel e API via Caddy | `http://localhost:8090` | `/health`, `/api/v1/health`, `/api/v1/ready` e `/login`: HTTP 200 |
+| n8n via Caddy | `http://localhost:5678` | `/`, `/healthz` e `/healthz/readiness`: HTTP 200 |
+| PostgreSQL | `127.0.0.1:5432` | Conexão TCP aprovada; readiness da API e healthcheck do contêiner aprovados |
+
+O backend em execução utiliza `APP_ORIGIN=http://localhost:8090`. Caddy encaminha internamente para frontend:3000 e backend:3001; essas portas não estão publicadas pelo Compose. n8n mantém URLs de editor/webhook em `http://localhost:5678/`. As três portas publicadas estão vinculadas a `127.0.0.1`.
+
+Sem cookie, `/respostas` redireciona para `/login` com HTTP 307 e `/api/v1/me` retorna HTTP 401, conforme esperado. Não foi executado login com a conta real nem validado OAuth externo nesta conferência.
+
+`docker compose --env-file .env -f compose.yaml -f compose.dev.yaml config --quiet` aprovado; `pnpm run test:infra`: dois testes aprovados. Frontend, backend, n8n e PostgreSQL estavam saudáveis. A porta atual do painel é **8090**; referências a 8080 em relatórios anteriores são evidências históricas. As pendências de implantação e serviços externos permanecem abertas.
+
+## Google Agenda antecipado — 11/11/2026
+
+Sexta migration aditiva `20261111000400_google_calendar`, aplicada pelo host, acrescenta somente conexão Google e estado OAuth. Variáveis `GOOGLE_CALENDAR_CLIENT_ID`, `GOOGLE_CALENDAR_CLIENT_SECRET` e `GOOGLE_CALENDAR_TOKEN_KEY` ficam exclusivamente no backend; exemplos versionados vazios. Preserve a chave AES-256 junto do ambiente privado e do backup criptografado: ela é necessária para recuperar refresh tokens. Credenciais reais não configuradas nesta rodada. Etapa WhatsApp/n8n adiada; nenhum workflow alterado. Configuração e evidências em [AGENDA_GOOGLE.md](AGENDA_GOOGLE.md).
+
+## Versões, simulador e IA — 11/11/2026
+
+Quinta migration aditiva `20261111000300_versions_simulation` aplicada pelo host no desenvolvimento. Schema e banco sem diferenças; usuários, contas, sessões e todos os rascunhos anteriores preservados por comparação SHA-256. Backend e frontend reiniciados sem build, mantendo os volumes. A imagem do migrador ainda exige reconstrução explícita antes de ser utilizada com migrations novas.
+
+O Compose passa `OPENAI_API_KEY` e `OPENAI_MODEL` exclusivamente ao backend. Modelos `.env.example` permanecem vazios. Não há configuração privada acrescentada, chave/modelo presentes no ambiente local ou chamada externa paga. Detalhes e configuração manual em [VERSOES_SIMULADOR_IA.md](VERSOES_SIMULADOR_IA.md). n8n, outros projetos Docker e pendências externas não foram alterados.
+
+## Conhecimento e assistente — 11/11/2026
+
+A quarta migration, `20261111000200_knowledge_assistant`, acrescenta estruturas de conhecimento e configuração da assistente. Foi aplicada pelo host ao banco de desenvolvimento, sem build e sem executar a imagem antiga do migrador. Nenhum serviço ou porta nova foi acrescentado ao Compose. Detalhes e limites de validação em [CONHECIMENTO_ASSISTENTE.md](CONHECIMENTO_ASSISTENTE.md).
+
+## Etapa 2 — migration de conteúdo, 11/11/2026
+
+O primeiro incremento de Respostas acrescenta a migration aditiva `20261111000100_response_drafts`, sem alterar usuários, sessões ou credenciais. Detalhes e verificações em [ETAPA_2_CONTEUDO.md](ETAPA_2_CONTEUDO.md). A topologia Docker permanece a mesma e as pendências de VPS e operação externa continuam abertas.
+
+Para usar a migration pelo host, gerar o cliente Prisma e executar `pnpm run db:migrate` no ambiente local correto. Para usar o serviço Docker `migrate`, sua imagem precisa incluir a nova migration; a reconstrução continua condicionada a pedido explícito de build. Não confundir o schema montado no backend com o conteúdo da imagem do migrador.
+
 ## Validação local — 10/11/2026
 
 O plano completo e as evidências desta rodada estão em [PLANO_VALIDACAO_ETAPA_1.md](PLANO_VALIDACAO_ETAPA_1.md) e [RESULTADOS_VALIDACAO_ETAPA_1.md](RESULTADOS_VALIDACAO_ETAPA_1.md). Os registros de 08/11 abaixo descrevem a entrega anterior e suas limitações naquela data.

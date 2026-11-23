@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "status": "blocked-reference",
+  "preparedOn": "2026-11-13",
+  "workflows": [
+    {
+      "file": "agendar-consulta.json",
+      "id": "baa51f70bba8c1ae",
+      "sourceNodes": 7,
+      "importedNodes": 8,
+      "disabledNodes": 2,
+      "entryTargets": {
+        "When Executed by Another Workflow": [
+          "Verificar conflito"
+        ]
+      }
+    },
+    {
+      "file": "cancelar-consulta.json",
+      "id": "1f4534f88f4e3cc2",
+      "sourceNodes": 6,
+      "importedNodes": 7,
+      "disabledNodes": 2,
+      "entryTargets": {
+        "When Executed by Another Workflow": [
+          "Get many events"
+        ]
+      }
+    },
+    {
+      "file": "confirmar-presenca.json",
+      "id": "1340d5eb8ce19cdd",
+      "sourceNodes": 6,
+      "importedNodes": 7,
+      "disabledNodes": 2,
+      "entryTargets": {
+        "When Executed by Another Workflow": [
+          "Get many events"
+        ]
+      }
+    },
+    {
+      "file": "consultar-consulta.json",
+      "id": "1f69cc6cfeca30b5",
+      "sourceNodes": 5,
+      "importedNodes": 6,
+      "disabledNodes": 1,
+      "entryTargets": {
+        "When Executed by Another Workflow": [
+          "Get many events"
+        ]
+      }
+    },
+    {
+      "file": "encaminhar-duvida.json",
+      "id": "c8212afd973a018b",
+      "sourceNodes": 3,
+      "importedNodes": 4,
+      "disabledNodes": 1,
+      "entryTargets": {
+        "When Executed by Another Workflow": [
+          "Edit Fields"
+        ]
+      }
+    },
+    {
+      "file": "remarcar-consulta.json",
+      "id": "0bb12717a5476eb8",
+      "sourceNodes": 10,
+      "importedNodes": 11,
+      "disabledNodes": 3,
+      "entryTargets": {
+        "When Executed by Another Workflow": [
+          "Buscar consulta do paciente"
+        ]
+      }
+    },
+    {
+      "file": "horarios-livres.json",
+      "id": "487d5c5d50e1d5de",
+      "sourceNodes": 4,
+      "importedNodes": 5,
+      "disabledNodes": 2,
+      "entryTargets": {
+        "Entrada": [
+          "Get many events"
+        ]
+      }
+    },
+    {
+      "file": "chatbot-whatsapp.json",
+      "id": "51fe545a04d940cd",
+      "sourceNodes": 45,
+      "importedNodes": 46,
+      "disabledNodes": 37,
+      "entryTargets": {
+        "Recebe mensagem": [
+          "Edit Fields1"
+        ]
+      }
+    }
+  ]
+}

@@ -6,12 +6,20 @@ import type { Environment } from "../../config/env.js";
 import type { createDatabase } from "../../plugins/database.js";
 import type { AppAuth } from "./auth.js";
 import { AccessError, createUser, createUserSchema, userSelect } from "../users/service.js";
+import { registerResponseRoutes } from "../responses/routes.js";
+import { registerKnowledgeRoutes } from "../knowledge/routes.js";
+import { registerAssistantRoutes } from "../assistant/routes.js";
+import { registerContentRoutes } from "../content/routes.js";
+import { registerSimulationRoutes } from "../simulation/routes.js";
+import { createAiProvider, type AiProvider } from "../ai/provider.js";
+import { registerCalendarRoutes } from "../calendar/routes.js";
+import { createGoogleCalendarProvider, type GoogleCalendarProvider } from "../calendar/google.js";
 
-export type AuthServices = { auth: AppAuth; database: ReturnType<typeof createDatabase>; env: Environment; resetEmailEnabled: boolean };
+export type AuthServices = { auth: AppAuth; database: ReturnType<typeof createDatabase>; env: Environment; resetEmailEnabled: boolean; aiProvider?: AiProvider; calendarProvider?: GoogleCalendarProvider };
 
 const exposedAuthRoutes = new Set(["sign-in/email", "sign-out", "get-session", "request-password-reset", "reset-password", "change-password"]);
 
-export async function registerAuthRoutes(app: FastifyInstance, { auth, database, env, resetEmailEnabled }: AuthServices) {
+export async function registerAuthRoutes(app: FastifyInstance, { auth, database, env, resetEmailEnabled, aiProvider, calendarProvider }: AuthServices) {
   app.addHook("onRequest", async (request, reply) => {
     reply.header("Cache-Control", "no-store");
     if (["GET", "HEAD", "OPTIONS"].includes(request.method)) return;
@@ -112,6 +120,13 @@ export async function registerAuthRoutes(app: FastifyInstance, { auth, database,
     await database.session.deleteMany({ where: { userId: id } });
     return { success: true };
   });
+
+  await registerResponseRoutes(app, { database, currentUser });
+  await registerKnowledgeRoutes(app, { database, currentUser });
+  await registerAssistantRoutes(app, { database, currentUser });
+  await registerContentRoutes(app, { database, currentUser });
+  await registerSimulationRoutes(app, { database, currentUser, provider: aiProvider ?? createAiProvider(env) });
+  await registerCalendarRoutes(app, { database, env, currentUser, provider: calendarProvider ?? (env.GOOGLE_CALENDAR_CLIENT_ID && env.GOOGLE_CALENDAR_CLIENT_SECRET ? createGoogleCalendarProvider(env.GOOGLE_CALENDAR_CLIENT_ID, env.GOOGLE_CALENDAR_CLIENT_SECRET) : undefined) });
 
   app.setErrorHandler((error, _request, reply) => {
     if (error instanceof AccessError) return reply.code(error.statusCode).send({ message: error.message });

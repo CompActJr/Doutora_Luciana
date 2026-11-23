@@ -1,3 +1,7 @@
+export class ApiError extends Error {
+  constructor(public status: number, message: string) { super(message); }
+}
+
 export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
@@ -13,11 +17,12 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
       400: "Revise os dados informados e tente novamente.",
       401: "Sua sessão expirou. Entre novamente.",
       403: "Você não tem permissão para esta operação.",
-      409: "Esse e-mail já existe ou a alteração de acesso não é permitida.",
+      404: "O registro não foi encontrado. Atualize a lista e tente novamente.",
+      409: "Os dados foram alterados ou esta operação não é permitida. Atualize e tente novamente.",
       429: "Muitas tentativas. Aguarde um minuto e tente novamente.",
       503: "Serviço indisponível. Tente novamente mais tarde ou contate a administradora.",
     };
-    throw new Error(messages[response.status] ?? "Não foi possível concluir. Tente novamente.");
+    throw new ApiError(response.status, messages[response.status] ?? "Não foi possível concluir. Tente novamente.");
   }
   return response.json() as Promise<T>;
 }

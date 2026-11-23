@@ -25,6 +25,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  simulations   Simulation[]
+  aiWindow      AiRequestWindow?
 
   @@map("user")
 }
@@ -84,4 +86,149 @@ model RateLimit {
   lastRequest BigInt
 
   @@map("rateLimit")
+}
+
+enum ResponseReviewStatus {
+  draft
+  needs_review
+  reviewed
+}
+
+// Conteúdo de trabalho. Não representa uma versão publicada para o bot.
+model ResponseTemplate {
+  id               String               @id @default(uuid())
+  title            String               @db.VarChar(120)
+  category         String               @db.VarChar(80)
+  questionExamples String[]             @default([])
+  answer           String
+  variations       String[]             @default([])
+  reviewStatus     ResponseReviewStatus @default(draft)
+  isActive         Boolean              @default(true)
+  revision         Int                  @default(1)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@index([isActive, updatedAt])
+  @@index([category])
+  @@map("response_template")
+}
+
+// Informações da clínica em revisão; nenhuma publicação é criada aqui.
+model KnowledgeEntry {
+  id           String               @id @default(uuid())
+  title        String               @db.VarChar(120)
+  category     String               @db.VarChar(80)
+  content      String
+  reviewStatus ResponseReviewStatus @default(draft)
+  isActive     Boolean              @default(true)
+  revision     Int                  @default(1)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@index([isActive, updatedAt])
+  @@index([category])
+  @@map("knowledge_entry")
+}
+
+// Instância única da clínica; GET sem cadastro não cria dados automaticamente.
+model AssistantSettings {
+  id                     String   @id @default("clinic") @db.VarChar(16)
+  displayName            String   @db.VarChar(80)
+  introduction           String
+  tone                   String
+  boundaries             String
+  handoffTriggers        String[] @default([])
+  handoffMessage         String
+  schedulingInstructions String
+  revision               Int      @default(1)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@map("assistant_settings")
+}
+
+// Snapshots completos e imutáveis, protegidos também por trigger PostgreSQL.
+model ContentVersion {
+  id           String   @id @default(uuid())
+  number       Int      @unique @default(autoincrement())
+  snapshot     Json
+  fingerprint  String   @db.VarChar(64)
+  note         String   @db.VarChar(500)
+  actorId      String
+  restoredFrom String?
+  createdAt    DateTime @default(now())
+  restoredSource ContentVersion? @relation("VersionRestoration", fields: [restoredFrom], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  restorations ContentVersion[] @relation("VersionRestoration")
+  releases     ContentRelease[]
+  simulations  Simulation[]
+
+  @@map("content_version")
+}
+
+model ContentRelease {
+  id        String @id
+  versionId String
+  revision  Int    @default(1)
+  version   ContentVersion @relation(fields: [versionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("content_release")
+}
+
+// Conversas exclusivas do painel. Não há destinatário nem operação de envio.
+model Simulation {
+  id              String   @id @default(uuid())
+  userId          String
+  mode            String
+  versionId       String?
+  snapshot        Json
+  fingerprint     String   @db.VarChar(64)
+  messages        Json     @default("[]")
+  revision        Int      @default(1)
+  processingToken String?
+  processingUntil DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  version         ContentVersion? @relation(fields: [versionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([userId, updatedAt])
+  @@map("simulation")
+}
+
+model AiRequestWindow {
+  userId    String   @id
+  startedAt DateTime @default(now())
+  count     Int      @default(1)
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("ai_request_window")
+}
+
+// Uma conta/agenda da clínica. Tokens são cifrados com chave própria do ambiente.
+model CalendarConnection {
+  id                 String   @id
+  generation         String   @unique
+  email              String
+  refreshTokenCipher String
+  calendarId         String?
+  calendarName       String?
+  timeZone           String   @default("America/Sao_Paulo")
+  revision           Int      @default(1)
+  needsReconnect     Boolean  @default(false)
+  connectedBy        String
+  connectedAt        DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("calendar_connection")
+}
+
+model CalendarOAuthState {
+  stateHash        String   @id
+  userId           String   @unique
+  verifierCipher   String
+  expectedRevision Int
+  expectedGeneration String?
+  expiresAt        DateTime
+
+  @@map("calendar_oauth_state")
 }

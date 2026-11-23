@@ -1,10 +1,16 @@
 # Autenticação e administração de acessos
 
+Etapa 2 — 11/11/2026: versões, simulador, sugestões de variações, estado de integração e OpenAPI herdam sessão, usuário ativo, origem exata e JSON. Ativar/restaurar versões exige admin na API; editor consulta histórico e simula. Conversas são privadas por usuário. Não há publicação para WhatsApp nem acesso de serviço n8n neste incremento. Rotas, limites e evidências em [VERSOES_SIMULADOR_IA.md](VERSOES_SIMULADOR_IA.md).
+
 ## Implementação
 
-Better Auth 1.7.18 processa login, logout, senhas e sessões na API Fastify, usando o adaptador Prisma e o PostgreSQL. A gestão de usuários é uma parte própria da API: somente `admin` pode criar contas, mudar perfis, bloquear acesso e revogar sessões. `editor` acessa o painel; as operações de conteúdo e publicação serão implementadas na etapa 2.
+Google Agenda antecipado em 11/11/2026: página `/agenda` e rotas `/api/v1/calendar/*` exigem administradora ativa. Editor não recebe acesso aos dados de consultas. OAuth usa sessão existente, state vinculado à administradora, uso único/expiração e PKCE; refresh token e verificador cifrados com chave exclusiva. Detalhes em [AGENDA_GOOGLE.md](AGENDA_GOOGLE.md). O callback GET não altera as regras de origem/JSON das demais mutações.
+
+Better Auth 1.7.18 processa login, logout, senhas e sessões na API Fastify, usando o adaptador Prisma e o PostgreSQL. A gestão de usuários é uma parte própria da API: somente `admin` pode criar contas, mudar perfis, bloquear acesso e revogar sessões. Admin e editor podem gerenciar rascunhos de Respostas, incluindo revisão, duplicação e desativação, conforme [ETAPA_2_CONTEUDO.md](ETAPA_2_CONTEUDO.md). Publicação e restauração de versões de conteúdo ainda não estão implementadas.
 
 O cadastro público está desabilitado e somente as rotas de autenticação utilizadas pelo painel são expostas. As senhas usam a função de hash do Better Auth, também usada na criação administrativa. Nunca armazenar ou registrar senhas em texto puro.
+
+Admin/editor também gerenciam informações de conhecimento e a configuração única da assistente, sempre em rascunho. Os dois módulos reutilizam a verificação de sessão e bloqueio do mesmo escopo protegido; consultar uma configuração ainda vazia não cria registros. Detalhes em [CONHECIMENTO_ASSISTENTE.md](CONHECIMENTO_ASSISTENTE.md).
 
 Sessões duram até oito horas, com renovação por atividade. O navegador recebe cookies HTTP-only e SameSite=Lax; em produção, os cookies também são Secure. A API consulta o usuário atual no banco para validar o perfil e o bloqueio, sem cache de autorização no cookie. Bloquear uma conta, alterar seu perfil ou revogar suas sessões encerra os acessos anteriores. A API impede que alguém remova o próprio acesso administrativo e preserva uma administradora ativa.
 
@@ -64,6 +70,11 @@ Sem servidor e remetente configurados, a recuperação retorna indisponibilidade
 | `POST /api/v1/users` | Admin; cadastra pessoa com senha inicial |
 | `PATCH /api/v1/users/:id` | Admin; muda perfil ou bloqueio |
 | `POST /api/v1/users/:id/revoke-sessions` | Admin; encerra sessões |
+| `/api/v1/responses` e `/api/v1/responses/:id` | Admin/editor; listagem, detalhe, criação e edição dos rascunhos |
+| `POST /api/v1/responses/:id/duplicate` | Admin/editor; duplica como rascunho independente |
+| `/api/v1/knowledge` e `/api/v1/knowledge/:id` | Admin/editor; consulta, cadastro, revisão e alteração de conhecimento |
+| `GET /api/v1/assistant-settings` | Admin/editor; configuração da assistente ou valor nulo se ainda não cadastrada |
+| `PUT /api/v1/assistant-settings` | Admin/editor; cria/altera configuração com controle de revisão |
 
 O link de recuperação também usa `GET /api/v1/auth/reset-password/:token` para redirecionar à página de nova senha. As páginas protegidas verificam a sessão no servidor; a API faz sua própria verificação em todas as operações.
 

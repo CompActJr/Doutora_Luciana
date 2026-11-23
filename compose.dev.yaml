@@ -17,7 +17,7 @@ services:
       target: development
     environment:
       NODE_ENV: development
-      APP_ORIGIN: http://localhost:8080
+      APP_ORIGIN: http://localhost:8090
     command: [sh, -c, "pnpm run db:generate && pnpm run dev:backend"]
     volumes:
       - .:/app
@@ -40,7 +40,7 @@ services:
       - frontend_pnpm_contracts:/app/packages/contracts/node_modules
       - frontend_next:/app/frontend/.next
   caddy:
-    ports: ["127.0.0.1:8080:80", "127.0.0.1:5678:5678"]
+    ports: ["127.0.0.1:8090:80", "127.0.0.1:5678:5678"]
     volumes:
       - ./infra/caddy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
 

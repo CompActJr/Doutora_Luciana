@@ -6,7 +6,15 @@ Status: infraestrutura e autenticação implementadas e etapa 1 validada localme
 
 Pendências de teste organizadas por etapa: [PENDENCIAS_DE_TESTE.md](PENDENCIAS_DE_TESTE.md).
 
+Atualização de 11/11/2026: etapa 2 iniciada pelo incremento de Respostas persistidas, com revisão editorial, prévia estática e publicação para WhatsApp desabilitada. Sequência de implementação e evidências específicas em [ETAPA_2_CONTEUDO.md](ETAPA_2_CONTEUDO.md). O aceite completo da etapa 2 e as pendências operacionais da etapa 1 continuam em aberto.
+
+Segundo incremento, no mesmo dia: Base de conhecimento e Configurações da assistente implementadas como rascunhos persistidos. Evidências em [CONHECIMENTO_ASSISTENTE.md](CONHECIMENTO_ASSISTENTE.md). Importação, versões/publicação, simulador e variações por IA continuam como próximos incrementos.
+
+Atualização posterior de escopo e implementação no mesmo dia: o usuário esclareceu que a planilha servia como exemplo inicial do atendimento, sem requisito de importador no painel. Versões completas, ativação/restauração interna, simulador, sugestões editáveis por OpenAI e documentação OpenAPI foram implementados. Evidências e dependências em [VERSOES_SIMULADOR_IA.md](VERSOES_SIMULADOR_IA.md). A integração externa da IA e a revisão clínica continuam pendentes; WhatsApp permanece na etapa 3.
+
 ## 1. Objetivo e decisões definidas
+
+Prioridade atual, definida pelo usuário em 11/11/2026: **adiar a implementação da etapa 3 e antecipar Google Agenda no próprio painel**, para a doutora visualizar e gerenciar consultas. A integração é direta painel/API/Google, sem depender de WhatsApp, n8n ou IA. Implementação, limites, autorização e evidências em [AGENDA_GOOGLE.md](AGENDA_GOOGLE.md). As etapas anteriores e suas pendências continuam registradas; a mudança não significa integração WhatsApp concluída.
 
 Construir um painel em que a clínica possa **editar respostas, ajustar o comportamento da assistente, simular conversas e publicar alterações para o bot**, sem precisar reprogramar o workflow.
 
@@ -73,11 +81,13 @@ No desktop, o editor terá lista de modelos, formulário e prévia da conversa. 
 
 As ações principais serão **Salvar rascunho**, **Simular** e **Publicar**. Variações geradas pela IA serão sugestões editáveis, sempre salvas como rascunho.
 
-A planilha será importada com prévia e revisão. Respostas prontas, informações da clínica e instruções de fluxo serão separadas. Duração de consulta, cancelamento e respostas conflitantes sobre preço ficarão pendentes de validação.
+A planilha é material inicial de referência, conforme esclarecimento do usuário em 11/11/2026; não haverá importador no painel. Respostas, informações da clínica e instruções são mantidas nos editores. Duração de consulta, cancelamento e informações conflitantes continuam dependentes de validação da doutora.
 
 **Aceite:** navegação responsiva, formulários acessíveis, conteúdo persistido e estados claros de carregamento, erro e alterações não salvas. Antes da integração real, qualquer simulação demonstrativa será identificada, e a publicação para o WhatsApp ficará desabilitada.
 
 ### Etapa 3 — Integração real com n8n e WhatsApp
+
+Preparação retomada por solicitação do usuário em **13/11/2026**: exportação da equipe recebida e analisada; oito cópias revisadas, inativas e bloqueadas, acrescentadas ao repositório e ao n8n local. Não há integração funcional com o painel ou atendimento ativado. Diagnóstico e sequência em [INTEGRACAO_N8N.md](INTEGRACAO_N8N.md). A agenda manual continua independente; as ferramentas automáticas recebidas exigem revisão e validação próprias.
 
 Primeiro, inspecionar e exportar o workflow atual, que ainda está em testes. Depois, substituir o conteúdo fixo do prompt pela consulta à API do painel.
 
@@ -97,6 +107,8 @@ A conexão oficial será validada primeiro com recursos de teste da Meta. Preser
 **Aceite:** uma alteração publicada passa a orientar as próximas respostas; rascunhos permanecem isolados; a simulação permite conferir o comportamento e os conteúdos utilizados.
 
 ### Etapa posterior — Google Agenda
+
+**Entrega antecipada por solicitação do usuário:** conexão OAuth, seleção de agenda, visualização por dia/semana/mês, criação, reagendamento e cancelamento manual no painel. Acesso inicial exclusivo da administradora. Integração externa e aceite com a conta real ainda precisam ser validados; detalhes em [AGENDA_GOOGLE.md](AGENDA_GOOGLE.md). Lembretes e agendamento automático por IA permanecem para outra entrega.
 
 Desenvolver em uma entrega própria: conexão OAuth, seleção da agenda, disponibilidade, criação, reagendamento e cancelamento. O Google Calendar será a referência dos compromissos.
 
@@ -125,7 +137,7 @@ Os testes principais verificarão:
 
 - Login, recuperação de senha, revogação de acesso e permissões.
 - Edição sem alteração da versão publicada, publicação e restauração.
-- Importação da planilha com itens incompletos e conteúdos conflitantes.
+- Revisão clínica das informações iniciais e resolução dos conteúdos incompletos/conflitantes; importação de planilha retirada do escopo.
 - Perguntas equivalentes, respostas curtas dependentes de contexto e encaminhamento humano.
 - Uso da mesma versão e lógica no simulador e no WhatsApp, sem exigir respostas literalmente idênticas da IA.
 - Falhas de API/IA, mensagens repetidas e retentativas sem envio duplicado.
@@ -140,7 +152,7 @@ Não haverá builds automáticos. Builds serão executados somente mediante pedi
 ## 6. Materiais de referência
 
 - [Contrato Dra. Luciana](materials/contrato_dra_luciana.pdf): escopo contratado e entregas previstas.
-- [Template de Mensagens](materials/template_de_mensagens.xlsx): conteúdo inicial para importação e revisão.
+- [Template de Mensagens](materials/template_de_mensagens.xlsx): exemplos iniciais do atendimento desejado, sujeitos à revisão clínica; sem requisito de importador.
 - Logos da Dra. Luciana disponíveis em `frontend/public/images/logos/`, com nomes em `snake_case`: identidade visual do painel.
 
 O contrato é referência de escopo e não será importado como conhecimento para as respostas do bot.
